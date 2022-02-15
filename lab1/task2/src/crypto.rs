@@ -23,9 +23,3 @@ pub fn encrypt(source: &mut Vec<u8>, key: &HashMap<u8, u8>) {
     source[i] = key[&source[i]]
   }
 }
-pub fn decrypt(source: &mut Vec<u8>, key: &HashMap<u8, u8>) {
-  let dec_key = decrypt_key(&key);
-  for i in 0..source.len() {
-    source[i] = dec_key[&source[i]]
-  }
-}

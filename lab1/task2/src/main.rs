@@ -39,12 +39,12 @@ fn main() -> io::Result<()> {
         }
     }
 
-    let mut s = Vec::new();
-    let mut key = HashMap::new();
+    let mut file_content = Vec::new();
     let mut key_buf = Vec::new();
+    let mut key = HashMap::new();
     let mut s_file = File::open(&source_path[0..source_path.len() - 1])?;
-    s_file.read_to_end(&mut s)?;
-    println!("{:?}", &s);
+    s_file.read_to_end(&mut file_content)?;
+    println!("{:?}", &file_content);
 
     let mut key_file = File::open(&key_path[0..key_path.len() - 1])?;
     key_file.read_to_end(&mut key_buf)?;
@@ -52,18 +52,20 @@ fn main() -> io::Result<()> {
     for i in (0..key_buf.len()).step_by(2) {
         key.insert(key_buf[i], key_buf[i + 1]);
     }
-    if encr {
-        encrypt(&mut s, &key);
-    } else {
-        let dec_key = decrypt_key(&key);
-        decrypt(&mut s, &dec_key);
+
+    match encr {
+        true => encrypt(&mut file_content, &key),
+        false => {
+            let dec_key = decrypt_key(&key);
+            encrypt(&mut file_content, &dec_key);
+        }
     }
-    println!("{:?}", &s);
+    println!("{:?}", &file_content);
 
     let mut out_file = File::create(&dest_path[0..dest_path.len() - 1])?;
-    out_file.write_all(&mut s)?;
+    out_file.write_all(&mut file_content)?;
 
-    s.clear();
+    file_content.clear();
     key.clear();
     key_buf.clear();
 
