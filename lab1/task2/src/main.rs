@@ -4,36 +4,9 @@ use std::io;
 use std::io::prelude::*;
 use std::vec::Vec;
 
-fn decrypt_key(key: &HashMap<u8, u8>) -> HashMap<u8, u8> {
-    let mut dec_key = HashMap::new();
-    for (k, value) in &*key {
-        dec_key.insert(*value, *k);
-    }
+mod crypto;
+use crypto::*;
 
-    dec_key
-}
-
-fn encrypt_key() -> Vec<u8> {
-    let mut key = Vec::new();
-    for i in 0u8..=255 {
-        key.push(i);
-        key.push(255 - i);
-    }
-
-    key
-}
-
-fn encrypt(source: &mut Vec<u8>, key: &HashMap<u8, u8>) {
-    for i in 0..source.len() {
-        source[i] = key[&source[i]]
-    }
-}
-fn decrypt(source: &mut Vec<u8>, key: &HashMap<u8, u8>) {
-    let dec_key = decrypt_key(&key);
-    for i in 0..source.len() {
-        source[i] = dec_key[&source[i]]
-    }
-}
 fn main() -> io::Result<()> {
     let mut out_file = File::create("src/a.txt")?;
     let mut my_str = encrypt_key();
@@ -41,33 +14,28 @@ fn main() -> io::Result<()> {
     my_str.clear();
     //
     println!("Enter source file");
-    let mut source_path = String::new();
-    io::stdin()
-        .read_line(&mut source_path)
-        .expect("Failed to read line");
+    let source_path = input();
 
     println!("Enter destination file");
-    let mut dest_path = String::new();
-    io::stdin()
-        .read_line(&mut dest_path)
-        .expect("Failed to read line");
+    let dest_path = input();
 
     println!("Enter key file");
-    let mut key_path = String::new();
-    io::stdin()
-        .read_line(&mut key_path)
-        .expect("Failed to read line");
+    let key_path = input();
     let encr;
     loop {
         println!("Encrypt or decrypt? (1 - encrypt; 2 - decrypt)");
         let mut s = String::new();
         io::stdin().read_line(&mut s).unwrap();
-        if s == "1\n" {
-            encr = true;
-            break;
-        } else if s == "2\n" {
-            encr = false;
-            break;
+        match s.trim() {
+            "1" => {
+                encr = true;
+                break;
+            }
+            "2" => {
+                encr = false;
+                break;
+            }
+            _ => continue,
         }
     }
 
@@ -100,4 +68,10 @@ fn main() -> io::Result<()> {
     key_buf.clear();
 
     Ok(())
+}
+
+pub fn input() -> String {
+    let mut s = String::new();
+    io::stdin().read_line(&mut s).expect("Failed to read line");
+    return s;
 }
