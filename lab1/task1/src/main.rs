@@ -29,9 +29,19 @@ fn main() -> io::Result<()> {
         *map.get_mut(&byte).unwrap() += 1;
     }
 
-    //вывод map
+    // вывод map
+    // 1-ый вариант
     for i in 0u8..=255 {
         println!("{}: {}", i, map[&i]);
+    }
+
+    // 2-ой вариант
+    for i in 0u8..=255 {
+        println!(
+            "{}: {:.2}%",
+            i,
+            map[&i] as f32 / buffer.len() as f32 * 100f32
+        );
     }
 
     //очистка
