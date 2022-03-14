@@ -1,7 +1,4 @@
-use crate::types::BYTE;
-use std::fs::File;
 use std::io;
-use std::io::prelude::*;
 
 pub fn input() -> String {
   let mut s = String::new();
